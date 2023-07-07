@@ -1,0 +1,29 @@
+[cli]
+ipfsGateway = "chainstorage-gateway.solarfs.io/ipfs/"
+useHttpsProtocol = true
+bucketPrefix = 'cs://'
+listOffset = 10
+cleanTmpData = true
+maxRetries = 3
+retryDelay = 3
+
+[sdk]
+defaultRegion = 'hk-1'
+timeZone = 'UTC +08:00'
+chainStorageApiEndpoint = 'chainstorage-api.solarfs.io'
+useHttpsProtocol = true
+carFileWorkPath = './tmp/carfile'
+chainStorageApiToken = ''
+httpRequestUserAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36'
+httpRequestOvertime = 30
+carVersion = 1
+
+[logger]
+logPath = './logs'
+mode = 'debug'
+level = 'info'
+isOutPutFile = true
+maxAgeDay = 7
+rotationTime = 1
+useJson = true
+loggerFile= 'chainstorage-cli-log'
