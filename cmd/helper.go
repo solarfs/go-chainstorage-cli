@@ -3,7 +3,7 @@ package cmd
 import (
 	"bufio"
 	"fmt"
-	sdkcode "github.com/paradeum-team/chainstorage-sdk/code"
+	sdkcode "github.com/solarfs/go-chainstorage-sdk/code"
 	"github.com/spf13/cobra"
 	"io"
 	"os"

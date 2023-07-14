@@ -7,7 +7,7 @@
 ## Installation
 
 ```
-go install github.com/paradeum-team/chainstorage-cli@latest
+go install github.com/solarfs/go-chainstorage-cli@latest
 ```
 
 ## Getting Started

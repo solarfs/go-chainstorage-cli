@@ -22,7 +22,7 @@ THE SOFTWARE.
 package main
 
 import (
-	"github.com/paradeum-team/chainstorage-cli/cmd"
+	"github.com/solarfs/go-chainstorage-cli/cmd"
 )
 
 var version string

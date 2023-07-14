@@ -18,7 +18,7 @@ Chainstorage-cli is a powerful and versatile tool that allows you to interact wi
 
 To install Chainstorage-cli, follow these steps:
 
-1. Download the latest release from the [GitHub repository](https://github.com/paradeum-team/chainstorage-cli/releases).
+1. Download the latest release from the [GitHub repository](https://github.com/solarfs/go-chainstorage-cli/releases).
 2. Extract the downloaded package to a desired location on your system.
 3. Add the tool's executable to your system's PATH variable to access it from anywhere in the terminal.
 
