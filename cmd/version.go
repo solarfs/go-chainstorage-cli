@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	chainstoragesdk "github.com/paradeum-team/chainstorage-sdk"
+	chainstoragesdk "github.com/solarfs/go-chainstorage-sdk"
 	"os"
 	"runtime"
 )

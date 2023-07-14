@@ -23,7 +23,7 @@ package cmd
 
 import (
 	"fmt"
-	chainstoragesdk "github.com/paradeum-team/chainstorage-sdk"
+	chainstoragesdk "github.com/solarfs/go-chainstorage-sdk"
 	"github.com/ulule/deepcopier"
 	"os"
 	"strings"

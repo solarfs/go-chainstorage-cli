@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	chainstoragesdk "github.com/paradeum-team/chainstorage-sdk"
-	sdkcode "github.com/paradeum-team/chainstorage-sdk/code"
-	"github.com/paradeum-team/chainstorage-sdk/consts"
-	"github.com/paradeum-team/chainstorage-sdk/model"
 	"github.com/pkg/errors"
+	chainstoragesdk "github.com/solarfs/go-chainstorage-sdk"
+	sdkcode "github.com/solarfs/go-chainstorage-sdk/code"
+	"github.com/solarfs/go-chainstorage-sdk/consts"
+	"github.com/solarfs/go-chainstorage-sdk/model"
 	"github.com/spf13/cobra"
 	"github.com/ulule/deepcopier"
 	"net/http"
