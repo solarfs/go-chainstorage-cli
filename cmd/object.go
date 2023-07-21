@@ -176,7 +176,7 @@ func objectListRunOutput(cmd *cobra.Command, args []string, resp model.ObjectPag
 	}
 
 	if len(respData.List) > 0 {
-		for i, _ := range respData.List {
+		for i := range respData.List {
 			objectOutput := ObjectOutput{}
 			deepcopier.Copy(respData.List[i]).To(&objectOutput)
 
@@ -506,7 +506,7 @@ func objectRemoveRun(cmd *cobra.Command, args []string) {
 	}
 
 	// 确认对象数据有效性
-	objectIdList := []int{}
+	var objectIdList []int
 	pageSize := 1000
 	pageIndex := 1
 	respObjectList, err := sdk.Object.GetObjectList(bucketId, objectItem, pageSize, pageIndex)
@@ -1602,7 +1602,7 @@ func extractFileNodes(objectCid, objectName, outputDir string) ([]DagFileNode, e
 		return nil, ErrNotDir
 	}
 
-	nodes := []DagFileNode{}
+	var nodes []DagFileNode
 	if node.Kind() == ipld.Kind_Map {
 		links, err := node.LookupByString("Links")
 		if err != nil {

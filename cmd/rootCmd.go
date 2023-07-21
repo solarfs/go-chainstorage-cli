@@ -135,7 +135,7 @@ func initConfig() {
 	cscConfig := CscConfig{}
 	err := viper.Unmarshal(&cscConfig)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "config Unmarshal fail, error:%+v\n", err)
+		fmt.Fprintf(os.Stderr, "config Unmarshal fail, error:%+v\n", err)
 		os.Exit(1)
 	}
 

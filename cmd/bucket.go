@@ -77,7 +77,7 @@ func bucketListRun(cmd *cobra.Command, args []string) {
 func bucketListRunOutput(cmd *cobra.Command, args []string, resp model.BucketPageResponse) {
 	code := resp.Code
 	if code != http.StatusOK {
-		err := errors.Errorf("code:%d, message:&s\n", resp.Code, resp.Msg)
+		err := errors.Errorf("code:%d, message:%s\n", resp.Code, resp.Msg)
 		Error(cmd, args, err)
 	}
 
@@ -94,7 +94,7 @@ func bucketListRunOutput(cmd *cobra.Command, args []string, resp model.BucketPag
 	}
 
 	if len(respData.List) > 0 {
-		for i, _ := range respData.List {
+		for i := range respData.List {
 			bucketOutput := BucketOutput{}
 			deepcopier.Copy(respData.List[i]).To(&bucketOutput)
 
