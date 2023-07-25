@@ -180,4 +180,6 @@ func checkConfig(config *CscConfig) {
 		os.Exit(1)
 	}
 
+	// car文件分片算法存在误差，因此实际分片大小限制到42MB
+	config.Sdk.CarFileShardingThreshold = 44040192
 }

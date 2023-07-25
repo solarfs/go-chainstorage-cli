@@ -355,7 +355,7 @@ func UploadData(sdk *chainstoragesdk.CssClient, bucketId int, dataPath string) (
 	defer bar.Finish()
 
 	extReader := bar.NewProxyReader(file)
-	defer extReader.Close()
+	//defer extReader.Close()
 
 	log.WithFields(logrus.Fields{
 		"carFileUploadReq": carFileUploadReq,
@@ -486,7 +486,7 @@ func UploadBigCarFile(sdk *chainstoragesdk.CssClient, req *model.CarFileUploadRe
 				defer file.Close()
 
 				extReader := bar.NewProxyReader(file)
-				defer extReader.Close()
+				//defer extReader.Close()
 
 				uploadResp, err = sdk.Car.UploadShardingCarFileExt(&uploadingReq, extReader)
 				return
@@ -894,7 +894,7 @@ func ImportData(sdk *chainstoragesdk.CssClient, bucketId int, dataPath string) (
 	defer bar.Finish()
 
 	extReader := bar.NewProxyReader(file)
-	defer extReader.Close()
+	//defer extReader.Close()
 
 	log.WithFields(logrus.Fields{
 		"carFileUploadReq": carFileUploadReq,
@@ -1023,7 +1023,7 @@ func ImportBigCarFile(sdk *chainstoragesdk.CssClient, req *model.CarFileUploadRe
 				defer file.Close()
 
 				extReader := bar.NewProxyReader(file)
-				defer extReader.Close()
+				//defer extReader.Close()
 
 				uploadResp, err = sdk.Car.UploadShardingCarFileExt(&uploadingReq, extReader)
 				return
