@@ -135,7 +135,7 @@ func initConfig() {
 	cscConfig := CscConfig{}
 	err := viper.Unmarshal(&cscConfig)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "config Unmarshal fail, error:%+v\n", err)
+		fmt.Fprintf(os.Stderr, "config Unmarshal fail, error:%+v\n", err)
 		os.Exit(1)
 	}
 
@@ -180,4 +180,6 @@ func checkConfig(config *CscConfig) {
 		os.Exit(1)
 	}
 
+	// car文件分片算法存在误差，因此实际分片大小限制到42MB
+	config.Sdk.CarFileShardingThreshold = 44040192
 }

@@ -3,8 +3,8 @@ module github.com/solarfs/go-chainstorage-cli
 go 1.20
 
 require (
-	github.com/alanshaw/go-carbites v0.6.0 // indirect
-	github.com/ipfs/go-cid v0.4.1 // indirect
+	github.com/alanshaw/go-carbites v0.6.0
+	github.com/ipfs/go-cid v0.4.1
 	github.com/lestrrat-go/file-rotatelogs v2.3.0+incompatible
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.2
@@ -19,7 +19,6 @@ require (
 	github.com/VividCortex/ewma v1.1.1 // indirect
 	github.com/antonholmquist/jason v1.0.1-0.20160829104012-962e09b85496 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20161001163130-7b3beb6df3c4 // indirect
-	github.com/cheggaaa/pb/v3 v3.0.8 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/flyleft/gprofile v0.0.0-20190121091042-4c613f874133 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
@@ -48,6 +47,7 @@ require (
 	github.com/ipfs/go-log/v2 v2.5.1 // indirect
 	github.com/ipfs/go-merkledag v0.10.0 // indirect
 	github.com/ipfs/go-metrics-interface v0.0.1 // indirect
+	github.com/ipfs/go-peertaskqueue v0.8.1 // indirect
 	github.com/ipfs/go-verifcid v0.0.2 // indirect
 	github.com/ipld/go-car v0.6.1-0.20230406035547-a06f8a9fdb4a // indirect
 	github.com/ipld/go-car/v2 v2.10.0 // indirect
@@ -58,6 +58,7 @@ require (
 	github.com/klauspost/cpuid/v2 v2.2.3 // indirect
 	github.com/lestrrat-go/strftime v1.0.1 // indirect
 	github.com/libp2p/go-buffer-pool v0.1.0 // indirect
+	github.com/libp2p/go-libp2p v0.25.1 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.17 // indirect
@@ -68,8 +69,8 @@ require (
 	github.com/mr-tron/base58 v1.2.0 // indirect
 	github.com/multiformats/go-base32 v0.1.0 // indirect
 	github.com/multiformats/go-base36 v0.2.0 // indirect
+	github.com/multiformats/go-multiaddr v0.8.0 // indirect
 	github.com/multiformats/go-multibase v0.1.1 // indirect
-	github.com/multiformats/go-multicodec v0.8.1 // indirect
 	github.com/multiformats/go-multihash v0.2.1 // indirect
 	github.com/multiformats/go-varint v0.0.7 // indirect
 	github.com/olebedev/config v0.0.0-20190528211619-364964f3a8e4 // indirect
@@ -111,8 +112,10 @@ replace github.com/go-resty/resty => gopkg.in/resty.v1 v1.11.0
 
 require (
 	github.com/Code-Hex/pget v0.1.1
+	github.com/cheggaaa/pb/v3 v3.0.8
 	github.com/ipfs/go-unixfsnode v1.6.0
 	github.com/ipld/go-codec-dagpb v1.6.0
 	github.com/ipld/go-ipld-prime v0.20.0
-	github.com/solarfs/go-chainstorage-sdk v0.0.9
+	github.com/multiformats/go-multicodec v0.8.1
+	github.com/solarfs/go-chainstorage-sdk v0.0.12
 )

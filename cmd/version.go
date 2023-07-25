@@ -15,13 +15,13 @@ var CliVersion string
 func GetApiVersion() string {
 	sdk, err := chainstoragesdk.New(&appConfig)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "get api version fail, error:%+v\n", err)
+		fmt.Fprintf(os.Stderr, "get api version fail, error:%+v\n", err)
 		os.Exit(1)
 	}
 
 	response, err := sdk.GetApiVersion()
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "get api version fail, error:%+v\n", err)
+		fmt.Fprintf(os.Stderr, "get api version fail, error:%+v\n", err)
 		os.Exit(1)
 	}
 

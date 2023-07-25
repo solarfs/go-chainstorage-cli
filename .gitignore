@@ -25,4 +25,5 @@ logs/
 go.work
 go.work.sum
 config.toml
-chainstorage-cli
+config.toml.dev
+go-chainstorage-cli
