@@ -50,7 +50,6 @@ require (
 	github.com/ipfs/go-peertaskqueue v0.8.1 // indirect
 	github.com/ipfs/go-verifcid v0.0.2 // indirect
 	github.com/ipld/go-car v0.6.1-0.20230406035547-a06f8a9fdb4a // indirect
-	github.com/ipld/go-car/v2 v2.10.0 // indirect
 	github.com/jbenet/goprocess v0.1.4 // indirect
 	github.com/jessevdk/go-flags v1.4.0 // indirect
 	github.com/kataras/golog v0.0.18 // indirect
@@ -114,6 +113,7 @@ require (
 	github.com/Code-Hex/pget v0.1.1
 	github.com/cheggaaa/pb/v3 v3.0.8
 	github.com/ipfs/go-unixfsnode v1.6.0
+	github.com/ipld/go-car/v2 v2.10.0
 	github.com/ipld/go-codec-dagpb v1.6.0
 	github.com/ipld/go-ipld-prime v0.20.0
 	github.com/multiformats/go-multicodec v0.8.1
