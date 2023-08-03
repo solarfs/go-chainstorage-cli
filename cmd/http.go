@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"io"
 	"net/http"
 )
@@ -36,7 +37,14 @@ func getHttpHeaderMap(url string) (map[string][]string, error) {
 func getDagData(url string) ([]byte, error) {
 	response, err := http.Get(url)
 	if err != nil {
-		fmt.Println("Error:", err)
+		//fmt.Println("Error:", err)
+
+		log.WithError(err).
+			WithFields(logrus.Fields{
+				"url":      url,
+				"response": response,
+			}).Error("fail to get http data.")
+
 		return nil, err
 	}
 	defer response.Body.Close()
@@ -44,7 +52,12 @@ func getDagData(url string) ([]byte, error) {
 	// Read the response body
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		fmt.Println("Error:", err)
+		//fmt.Println("Error:", err)
+		log.WithError(err).
+			WithFields(logrus.Fields{
+				"url":           url,
+				"response.Body": response.Body,
+			}).Error("fail to read response.Body.")
 		return nil, err
 	}
 
