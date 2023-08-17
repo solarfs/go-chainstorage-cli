@@ -11,4 +11,4 @@ jobs:
       run: |
         pwd
         date
-        ls
+        sh ../../build.sh
