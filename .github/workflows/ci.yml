@@ -9,4 +9,4 @@ jobs:
     steps:
     - name: Build
       run: |
-        .\build.sh
+        ls
