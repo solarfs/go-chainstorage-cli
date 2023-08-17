@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Build
+      uses: actions/checkout@kangdev
       run: |
         pwd
         date
