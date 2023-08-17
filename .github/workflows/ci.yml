@@ -9,6 +9,8 @@ jobs:
     steps:
     - name: Build
       uses: actions/checkout@kangdev
+
+    - name: Build
       run: |
         pwd
         date
