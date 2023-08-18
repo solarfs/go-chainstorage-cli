@@ -17,5 +17,3 @@ jobs:
       - name: pwd
         run: pwd
 
-      - name: date
-        run: date
