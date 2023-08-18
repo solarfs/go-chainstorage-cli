@@ -8,9 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Build
-      uses: solarfs/go-chainstorage-cli@kangdev
-
-    - name: Build
       run: |
+        ls
         pwd
         date
