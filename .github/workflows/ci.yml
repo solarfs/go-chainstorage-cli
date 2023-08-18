@@ -11,17 +11,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Build
-        run: ls | pwd | date
+      - name: ls
+        run: ls
 
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: '1.15'
+      - name: pwd
+        run: pwd
 
-      - name: Build
-        run: go build -v ./...
-
-      - name: Test
-        run: go test -v ./...
-
+      - name: date
+        run: date
