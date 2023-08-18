@@ -14,4 +14,3 @@ jobs:
       run: |
         pwd
         date
-        sh /home/runner/work/go-chainstorage-cli/go-chainstorage-cli/build.sh
