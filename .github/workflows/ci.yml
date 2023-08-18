@@ -11,6 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Build
+        run: ls | pwd | date
+
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
