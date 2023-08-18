@@ -1,2 +1,4 @@
-#!/bin/sh
-/bin/sh ls
+echo "build.sh"
+ls
+pwd
+date
