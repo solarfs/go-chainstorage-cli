@@ -27,4 +27,4 @@ do
 #	sh  upload-github-release-asset.sh github_api_token=$token owner=solarfs repo=go-chainstorage-cli tag=$tag filename=./$dirname.zip
 	rm -rf $dirname.zip $dirname
 done
-
+git --version
