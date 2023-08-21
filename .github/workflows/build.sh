@@ -7,7 +7,8 @@ token="github_api_token"
 #tag=$(git describe --tags `git rev-list --tags --max-count=1`)
 
 
-for goos in darwin windows linux
+#for goos in darwin windows linux
+for goos in linux
 do
 	dirname="gcscmd_tag_${goos}_amd64"
 	filename="$dirname"
@@ -25,6 +26,7 @@ do
 
 	zip -r $dirname.zip $dirname
 #	sh  upload-github-release-asset.sh github_api_token=$token owner=solarfs repo=go-chainstorage-cli tag=$tag filename=./$dirname.zip
+        sh upload-github-release-asset.sh github_api_token=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 owner=solarfs repo=go-chainstorage-cli tag=v0.0.9 filename=./$dirname.zip
 	rm -rf $dirname.zip $dirname
 done
 git --version

@@ -11,19 +11,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-#      - name: Set up Go
-#        uses: actions/setup-go@v4
-#        with:
-#          go-version: '1.20'
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
 
       - name: Build
         env:
           USERNAME: "${{ secrets.USERNAME }}"
           FM_PASSWD: "aabbccdd"
         run: |
-          echo ${FM_PASSWD} >> aa.sh
-          /bin/bash .github/workflows/upload-github-release-asset.sh github_api_token=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 owner=solarfs repo=go-chainstorage-cli tag=v0.0.9 filename=./aa.sh
           env
-#          /bin/bash .github/workflows/build.sh
-#          ls
+          /bin/bash .github/workflows/build.sh
 
