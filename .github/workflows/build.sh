@@ -29,5 +29,7 @@ do
 done
 git --version
 
-echo ${USER_NAME}_${USER_EMAIL}
-echo ${MY_TOKEN}
+echo aa${{ secrets.USERNAME }}
+echo bb${secrets.USERNAME}
+
+
