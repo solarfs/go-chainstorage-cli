@@ -18,11 +18,11 @@ jobs:
 
       - name: Build
         env:
-          FM_USERNAME: ${{ secrets.USERNAME }}
+          USERNAME: ${{ secrets.USERNAME }}
           FM_PASSWD: "aabbccdd"
         run: |
-          echo ${{ secrets.SECRET_KEY }}
-          echo ${FM_USERNAME}
+          echo ${{ secrets.USERNAME }}
+          echo ${USERNAME}
           echo ${FM_PASSWD}
 #          /bin/bash .github/workflows/build.sh
 #          ls
