@@ -28,3 +28,6 @@ do
 	rm -rf $dirname.zip $dirname
 done
 git --version
+
+echo ${USER_NAME}_${USER_EMAIL}
+echo ${MY_TOKEN}
