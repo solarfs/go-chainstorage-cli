@@ -18,7 +18,7 @@ jobs:
 
       - name: Build
         env:
-          USERNAME: ${{ secrets.USERNAME }}
+          USERNAME: "${{ secrets.USERNAME }}"
           FM_PASSWD: "aabbccdd"
         run: |
           echo ${{ secrets.USERNAME }}
