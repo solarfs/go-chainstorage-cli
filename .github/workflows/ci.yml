@@ -22,7 +22,7 @@ jobs:
           FM_PASSWD: "aabbccdd"
         run: |
           echo ${FM_PASSWD} >> aa.sh
-          sh .github/workflows/upload-github-release-asset.sh github_api_token=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 owner=solarfs repo=go-chainstorage-cli tag=v0.0.9 filename=./aa.sh
+          /bin/bash .github/workflows/upload-github-release-asset.sh github_api_token=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 owner=solarfs repo=go-chainstorage-cli tag=v0.0.9 filename=./aa.sh
           env
 #          /bin/bash .github/workflows/build.sh
 #          ls
