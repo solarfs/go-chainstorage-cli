@@ -21,6 +21,9 @@ jobs:
           go-version: '1.20'
 
       - name: Build
-        run: /bin/bash .github/workflows/build.sh
+        env:
+          FM_USERNAME: ${{ secrets.USERNAME }}
+        run: |
+          /bin/bash .github/workflows/build.sh
 
 
