@@ -29,7 +29,6 @@ do
 done
 git --version
 
-echo aa${{ secrets.USERNAME }}
 echo bb${secrets.USERNAME}
 
 
