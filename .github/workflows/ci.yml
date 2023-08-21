@@ -21,6 +21,7 @@ jobs:
           USERNAME: "${{ secrets.USERNAME }}"
           FM_PASSWD: "aabbccdd"
         run: |
+          curl http://baidu.com
           echo ${{ secrets.USERNAME }}
           echo ${USERNAME}
           echo ${FM_PASSWD}
