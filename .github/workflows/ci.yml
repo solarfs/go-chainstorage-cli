@@ -22,6 +22,6 @@ jobs:
       - name: Build
         run: /bin/bash .github/workflows/test.sh
 
-      - name: ls
-        run: ls
+      - name: git
+        run: git
 
