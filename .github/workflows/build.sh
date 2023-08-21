@@ -25,8 +25,9 @@ do
 	cp -R LICENSE README.md config.toml.sample MANUAL.md CHANGELOG.md changelogs/ $dirname/
 
 	zip -r $dirname.zip $dirname
+        pwd
 #	sh  upload-github-release-asset.sh github_api_token=$token owner=solarfs repo=go-chainstorage-cli tag=$tag filename=./$dirname.zip
-        sh upload-github-release-asset.sh github_api_token=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 owner=solarfs repo=go-chainstorage-cli tag=v0.0.9 filename=./$dirname.zip
+        sh .github/workflows/upload-github-release-asset.sh github_api_token=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 owner=solarfs repo=go-chainstorage-cli tag=v0.0.9 filename=./$dirname.zip
 	rm -rf $dirname.zip $dirname
 done
 git --version
