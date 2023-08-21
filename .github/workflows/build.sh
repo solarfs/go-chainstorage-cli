@@ -29,6 +29,6 @@ do
 done
 git --version
 
-echo bb${secrets.USERNAME}
+echo ${secrets.USERNAME}
 
-
+echo ${{ secrets.USERNAME }}
