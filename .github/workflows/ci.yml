@@ -24,6 +24,7 @@ jobs:
           echo ${{ secrets.USERNAME }}
           echo ${USERNAME}
           echo ${FM_PASSWD}
+          env
 #          /bin/bash .github/workflows/build.sh
 #          ls
 
