@@ -30,6 +30,5 @@ done
 git --version
 
 echo ${FM_USERNAME}
-echo ${secrets.USERNAME}
 
-echo ${{ secrets.USERNAME }}
+
