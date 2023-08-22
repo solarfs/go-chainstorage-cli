@@ -4,8 +4,9 @@ set -ex
 
 token="github_api_token"
 
-#tag=$(git describe --tags `git rev-list --tags --max-count=1`)
-
+tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+echo ${tag}
+exit 0
 
 #for goos in darwin windows linux
 for goos in linux
@@ -30,8 +31,6 @@ do
         /bin/bash .github/workflows/upload-github-release-asset.sh github_api_token=${FM_MY_TOKEN} owner=solarfs repo=go-chainstorage-cli tag=v0.0.9test filename=./$dirname.zip
 	rm -rf $dirname.zip $dirname
 done
-git --version
 
-echo ${FM_USERNAME}
 
 
