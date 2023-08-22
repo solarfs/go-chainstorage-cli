@@ -8,7 +8,7 @@ token="github_api_token"
 
 for goos in darwin windows linux
 do
-	dirname="gcscmd_tag_${goos}_amd64"
+	dirname="gcscmd_${GITHUB_REF_NAME}_${goos}_amd64"
 	filename="$dirname"
 
 	rm -rf $dirname $dirname.zip
