@@ -17,7 +17,7 @@ jobs:
 
       - name: Build
         env:
-          FM_MY_TOKEN: "${{ secrets.MY_TOKEN }}"
+          FM_CICD_TOKEN: "${{ secrets.CICD_TOKEN }}"
         run: |
           /bin/bash .github/workflows/build.sh
 
