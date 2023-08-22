@@ -3,7 +3,6 @@ set -ex
 
 
 token="github_api_token"
-echo ${token}
 #tag=$(git describe --tags `git rev-list --tags --max-count=1`)
 git tag -l
 exit 0
