@@ -27,7 +27,7 @@ do
 	zip -r $dirname.zip $dirname
         pwd
 #	sh  upload-github-release-asset.sh github_api_token=$token owner=solarfs repo=go-chainstorage-cli tag=$tag filename=./$dirname.zip
-        /bin/bash .github/workflows/upload-github-release-asset.sh github_api_token=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 owner=solarfs repo=go-chainstorage-cli tag=v0.0.9 filename=./$dirname.zip
+        /bin/bash upload-github-release-asset.sh github_api_token=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 owner=solarfs repo=go-chainstorage-cli tag=v0.0.9test filename=./$dirname.zip
 	rm -rf $dirname.zip $dirname
 done
 git --version
