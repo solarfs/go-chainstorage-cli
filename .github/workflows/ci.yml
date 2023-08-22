@@ -19,7 +19,5 @@ jobs:
         env:
           FM_MY_TOKEN: "${{ secrets.MY_TOKEN }}"
         run: |
-          env
-          env | grep aabbccdd
-          #/bin/bash .github/workflows/build.sh
+          /bin/bash .github/workflows/build.sh
 
