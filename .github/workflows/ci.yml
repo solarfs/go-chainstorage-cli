@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - kangdev
-
+      - 'releases/**'
 jobs:
   build:
 
