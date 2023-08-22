@@ -3,8 +3,6 @@ set -ex
 
 
 token="github_api_token"
-#tag=$(git describe --tags `git rev-list --tags --max-count=1`)
-#GITHUB_REF_NAME
 
 for goos in darwin windows linux
 do
@@ -24,7 +22,6 @@ do
 
 	zip -r $dirname.zip $dirname
         pwd
-#	sh  upload-github-release-asset.sh github_api_token=$token owner=solarfs repo=go-chainstorage-cli tag=$tag filename=./$dirname.zip
         /bin/bash .github/workflows/upload-github-release-asset.sh github_api_token=${FM_MY_TOKEN} owner=solarfs repo=go-chainstorage-cli tag=${GITHUB_REF_NAME} filename=./$dirname.zip
 	rm -rf $dirname.zip $dirname
 done
