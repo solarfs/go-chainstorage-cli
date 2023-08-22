@@ -4,8 +4,11 @@ set -ex
 
 token="github_api_token"
 
-tag=$(git describe --tags `git rev-list --tags --max-count=1`)
-echo ${tag}
+#tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+tag1=`git rev-list --tags --max-count=1`
+echo ${tag1}
+tag2=`git describe --tags `git rev-list --tags --max-count=1``
+echo ${tag2}
 exit 0
 
 #for goos in darwin windows linux
