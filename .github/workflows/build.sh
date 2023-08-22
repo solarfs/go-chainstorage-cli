@@ -5,10 +5,7 @@ set -ex
 token="github_api_token"
 echo ${token}
 #tag=$(git describe --tags `git rev-list --tags --max-count=1`)
-git rev-list --tags --max-count=1
-echo ${tag1}
-git describe --tags git rev-list --tags --max-count=1
-echo ${tag2}
+git tag -l
 exit 0
 
 #for goos in darwin windows linux
