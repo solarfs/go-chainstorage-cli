@@ -117,5 +117,5 @@ require (
 	github.com/ipld/go-codec-dagpb v1.6.0
 	github.com/ipld/go-ipld-prime v0.20.0
 	github.com/multiformats/go-multicodec v0.8.1
-	github.com/solarfs/go-chainstorage-sdk v0.0.12
+	github.com/solarfs/go-chainstorage-sdk v0.0.13
 )
