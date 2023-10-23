@@ -181,5 +181,7 @@ func checkConfig(config *CscConfig) {
 	}
 
 	// car文件分片算法存在误差，因此实际分片大小限制到42MB
-	config.Sdk.CarFileShardingThreshold = 44040192
+	//config.Sdk.CarFileShardingThreshold = 44040192
+	// 上传超时优化，10MB
+	config.Sdk.CarFileShardingThreshold = 10485760
 }

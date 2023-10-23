@@ -4,6 +4,14 @@ import (
 	"fmt"
 	"github.com/alanshaw/go-carbites"
 	"github.com/cheggaaa/pb/v3"
+	"github.com/ipfs/go-cid"
+	"github.com/ipfs/go-unixfsnode"
+	"github.com/ipfs/go-unixfsnode/data"
+	carstorage "github.com/ipld/go-car/v2/storage"
+	dagpb "github.com/ipld/go-codec-dagpb"
+	"github.com/ipld/go-ipld-prime"
+	cidlink "github.com/ipld/go-ipld-prime/linking/cid"
+	"github.com/ipld/go-ipld-prime/node/basicnode"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	chainstoragesdk "github.com/solarfs/go-chainstorage-sdk"
@@ -91,7 +99,7 @@ func carUploadRun(cmd *cobra.Command, args []string) {
 
 	// 检查上传数据使用限制
 	storageNetworkCode := respBucket.Data.StorageNetworkCode
-	err = checkDataUsageLimitation(sdk, storageNetworkCode, dataPath)
+	err = checkUploadingDataUsageLimitation(sdk, storageNetworkCode, dataPath)
 	if err != nil {
 		Error(cmd, args, err)
 	}
@@ -181,7 +189,7 @@ func UploadData(sdk *chainstoragesdk.CssClient, bucketId int, dataPath string) (
 	if fileInfo.IsDir() {
 		notEmpty, err := isFolderNotEmpty(dataPath)
 		if err != nil {
-			log.WithError(err).WithField("dataPath", dataPath).Error("fail to check uploadiong folder")
+			log.WithError(err).WithField("dataPath", dataPath).Error("fail to check uploading folder")
 			return response, err
 		}
 
@@ -478,19 +486,19 @@ func UploadBigCarFile(sdk *chainstoragesdk.CssClient, req *model.CarFileUploadRe
 			//	break
 			//}
 
-			uploadResp, err := func() (uploadResp model.ShardingCarFileUploadResponse, err error) {
+			uploadResp, err := func(bar *pb.ProgressBar) (model.ShardingCarFileUploadResponse, error) {
+				shardingCarFileUploadResponse := model.ShardingCarFileUploadResponse{}
 				file, err := os.Open(uploadingReq.FileDestination)
 				if err != nil {
-					return
+					return shardingCarFileUploadResponse, err
 				}
 				defer file.Close()
 
 				extReader := bar.NewProxyReader(file)
 				//defer extReader.Close()
 
-				uploadResp, err = sdk.Car.UploadShardingCarFileExt(&uploadingReq, extReader)
-				return
-			}()
+				return sdk.Car.UploadShardingCarFileExt(&uploadingReq, extReader)
+			}(bar)
 			if err == nil && uploadResp.Code == http.StatusOK {
 				uploadRespList = append(uploadRespList, uploadResp)
 				break
@@ -611,7 +619,7 @@ func carImportRun(cmd *cobra.Command, args []string) {
 
 	// 检查上传数据使用限制
 	storageNetworkCode := respBucket.Data.StorageNetworkCode
-	err = checkDataUsageLimitation(sdk, storageNetworkCode, dataPath)
+	err = checkImportingDataUsageLimitation(sdk, storageNetworkCode, dataPath)
 	if err != nil {
 		Error(cmd, args, err)
 	}
@@ -623,72 +631,6 @@ func carImportRun(cmd *cobra.Command, args []string) {
 	}
 
 	carImportRunOutput(cmd, args, response)
-}
-
-// 检查上传数据使用限制
-func checkDataUsageLimitation(sdk *chainstoragesdk.CssClient, storageNetworkCode int, dataPath string) error {
-	// 检查可用空间
-	usersQuotaResp, err := sdk.Bucket.GetUsersQuotaByStorageNetworkCode(storageNetworkCode)
-	if err != nil {
-		return err
-	}
-
-	usersQuota := usersQuotaResp.Data
-	usersQuotaDetails := usersQuota.Details
-	if len(usersQuotaDetails) == 0 {
-		return sdkcode.ErrBucketQuotaFetchFail
-	}
-
-	// 基础版本
-	isBasicVersion := usersQuota.PackagePlanId == 21001
-	availableStorageSpace := int64(0)
-	availableFileAmount := int64(0)
-	availableUploadDirItems := int64(0)
-
-	for _, usersQuotaDetail := range usersQuotaDetails {
-		// 空间存储限制
-		if usersQuotaDetail.ConstraintName == consts.ConstraintStorageSpace.String() {
-			//availableStorageSpace = usersQuotaDetail.Available
-			availableStorageSpace = usersQuotaDetail.LimitedQuota - usersQuotaDetail.UsedQuota
-		}
-
-		// 对象存储限制
-		if usersQuotaDetail.ConstraintName == consts.ConstraintFileLimited.String() {
-			//availableFileAmount = usersQuotaDetail.Available
-			availableFileAmount = usersQuotaDetail.LimitedQuota - usersQuotaDetail.UsedQuota
-		}
-
-		// 上传文件夹条目限制
-		if usersQuotaDetail.ConstraintName == consts.ConstraintUploadDirItems.String() {
-			//availableUploadDirItems = usersQuotaDetail.Available
-			availableUploadDirItems = usersQuotaDetail.LimitedQuota - usersQuotaDetail.UsedQuota
-		}
-	}
-
-	// 可用文件存储限制超限
-	if availableFileAmount <= 0 {
-		return sdkcode.ErrCarUploadFileExccedObjectAmountUsage
-	}
-
-	// 获取上传数据使用量
-	fileAmount, totalSize, err := getUploadingDataUsage(dataPath)
-	if err != nil {
-		return err
-	}
-
-	// 上传文件夹条目限制超限
-	if fileAmount > availableUploadDirItems {
-		return sdkcode.ErrCarUploadFileExccedObjectAmountUsage
-	}
-
-	if isBasicVersion {
-		// 可用存储空间超限
-		if totalSize > availableStorageSpace {
-			return sdkcode.ErrCarUploadFileExccedStorageSpaceUsage
-		}
-	}
-
-	return nil
 }
 
 func carImportRunOutput(cmd *cobra.Command, args []string, resp model.ObjectCreateResponse) {
@@ -1015,19 +957,20 @@ func ImportBigCarFile(sdk *chainstoragesdk.CssClient, req *model.CarFileUploadRe
 			//	break
 			//}
 
-			uploadResp, err := func() (uploadResp model.ShardingCarFileUploadResponse, err error) {
+			uploadResp, err := func(bar *pb.ProgressBar) (model.ShardingCarFileUploadResponse, error) {
+				shardingCarFileUploadResponse := model.ShardingCarFileUploadResponse{}
 				file, err := os.Open(uploadingReq.FileDestination)
 				if err != nil {
-					return
+					return shardingCarFileUploadResponse, err
 				}
 				defer file.Close()
 
 				extReader := bar.NewProxyReader(file)
 				//defer extReader.Close()
 
-				uploadResp, err = sdk.Car.UploadShardingCarFileExt(&uploadingReq, extReader)
-				return
-			}()
+				//uploadResp, err = sdk.Car.UploadShardingCarFileExt(&uploadingReq, extReader)
+				return sdk.Car.UploadShardingCarFileExt(&uploadingReq, extReader)
+			}(bar)
 			if err == nil && uploadResp.Code == http.StatusOK {
 				uploadRespList = append(uploadRespList, uploadResp)
 				break
@@ -1109,23 +1052,360 @@ type CarImportOutput struct {
 
 // endregion CAR Import
 
-//func makeBar(req *model.CarFileUploadReq) *pb.ProgressBar {
-//	objectSize := int(req.ObjectSize)
-//	bar := pb.New(objectSize).
-//
-//	bar := pb.New(int(sourceSize)).SetUnits(pb.U_BYTES).SetRefreshRate(time.Millisecond * 10)
-//	bar.ShowSpeed = true
-//	bar.
-//	// show percents (by default already true)
-//	bar.ShowPercent = true
-//
-//	// show bar (by default already true)
-//	bar.ShowBar = true
-//
-//	bar.ShowCounters = true
-//
-//	bar.ShowTimeLeft = true
-//}
+// region auxiliary method
+
+// 检查上传数据使用限制
+func checkUploadingDataUsageLimitation(sdk *chainstoragesdk.CssClient, storageNetworkCode int, dataPath string) error {
+	// 检查可用空间
+	usersQuotaResp, err := sdk.Bucket.GetUsersQuotaByStorageNetworkCode(storageNetworkCode)
+	if err != nil {
+		return err
+	}
+
+	usersQuota := usersQuotaResp.Data
+	usersQuotaDetails := usersQuota.Details
+	if len(usersQuotaDetails) == 0 {
+		return sdkcode.ErrBucketQuotaFetchFail
+	}
+
+	// 基础版本
+	isBasicVersion := usersQuota.PackagePlanId == 21001
+	availableStorageSpace := int64(0)
+	availableFileAmount := int64(0)
+	availableUploadDirItems := int64(0)
+
+	for _, usersQuotaDetail := range usersQuotaDetails {
+		// 空间存储限制
+		if usersQuotaDetail.ConstraintName == consts.ConstraintStorageSpace.String() {
+			//availableStorageSpace = usersQuotaDetail.Available
+			availableStorageSpace = usersQuotaDetail.LimitedQuota - usersQuotaDetail.UsedQuota
+		}
+
+		// 对象存储限制
+		if usersQuotaDetail.ConstraintName == consts.ConstraintFileLimited.String() {
+			//availableFileAmount = usersQuotaDetail.Available
+			availableFileAmount = usersQuotaDetail.LimitedQuota - usersQuotaDetail.UsedQuota
+		}
+
+		// 上传文件夹条目限制
+		if usersQuotaDetail.ConstraintName == consts.ConstraintUploadDirItems.String() {
+			//availableUploadDirItems = usersQuotaDetail.Available
+			availableUploadDirItems = usersQuotaDetail.LimitedQuota - usersQuotaDetail.UsedQuota
+		}
+	}
+
+	// 可用文件存储限制超限
+	if availableFileAmount <= 0 {
+		return sdkcode.ErrCarUploadFileExccedObjectAmountUsage
+	}
+
+	// 获取上传数据使用量
+	fileAmount, totalSize, err := getUploadingDataUsage(dataPath)
+	if err != nil {
+		return err
+	}
+
+	// 上传文件夹条目限制超限
+	if fileAmount > availableUploadDirItems {
+		return sdkcode.ErrCarUploadFileExccedObjectAmountUsage
+	}
+
+	if isBasicVersion {
+		// 可用存储空间超限
+		if totalSize > availableStorageSpace {
+			return sdkcode.ErrCarUploadFileExccedStorageSpaceUsage
+		}
+	}
+
+	return nil
+}
+
+// 检查导入数据使用限制
+func checkImportingDataUsageLimitation(sdk *chainstoragesdk.CssClient, storageNetworkCode int, dataPath string) error {
+	// 检查可用空间
+	usersQuotaResp, err := sdk.Bucket.GetUsersQuotaByStorageNetworkCode(storageNetworkCode)
+	if err != nil {
+		return err
+	}
+
+	usersQuota := usersQuotaResp.Data
+	usersQuotaDetails := usersQuota.Details
+	if len(usersQuotaDetails) == 0 {
+		return sdkcode.ErrBucketQuotaFetchFail
+	}
+
+	// 基础版本
+	isBasicVersion := usersQuota.PackagePlanId == 21001
+	availableStorageSpace := int64(0)
+	availableFileAmount := int64(0)
+	availableUploadDirItems := int64(0)
+
+	for _, usersQuotaDetail := range usersQuotaDetails {
+		// 空间存储限制
+		if usersQuotaDetail.ConstraintName == consts.ConstraintStorageSpace.String() {
+			//availableStorageSpace = usersQuotaDetail.Available
+			availableStorageSpace = usersQuotaDetail.LimitedQuota - usersQuotaDetail.UsedQuota
+		}
+
+		// 对象存储限制
+		if usersQuotaDetail.ConstraintName == consts.ConstraintFileLimited.String() {
+			//availableFileAmount = usersQuotaDetail.Available
+			availableFileAmount = usersQuotaDetail.LimitedQuota - usersQuotaDetail.UsedQuota
+		}
+
+		// 上传文件夹条目限制
+		if usersQuotaDetail.ConstraintName == consts.ConstraintUploadDirItems.String() {
+			//availableUploadDirItems = usersQuotaDetail.Available
+			availableUploadDirItems = usersQuotaDetail.LimitedQuota - usersQuotaDetail.UsedQuota
+		}
+	}
+
+	// 可用文件存储限制超限
+	if availableFileAmount <= 0 {
+		return sdkcode.ErrCarUploadFileExccedObjectAmountUsage
+	}
+
+	// 获取导入数据使用量
+	fileAmount, totalSize, err := getImportingDataUsage(dataPath)
+	if err != nil {
+		return err
+	}
+
+	// 导入文件夹条目限制超限
+	if fileAmount > availableUploadDirItems {
+		return sdkcode.ErrCarUploadFileExccedObjectAmountUsage
+	}
+
+	if isBasicVersion {
+		// 可用存储空间超限
+		if totalSize > availableStorageSpace {
+			return sdkcode.ErrCarUploadFileExccedStorageSpaceUsage
+		}
+	}
+
+	return nil
+}
+
+// 获取导入数据使用量
+func getImportingDataUsage(dataPath string) (int64, int64, error) {
+	var fileAmount int64
+	var totalSize int64
+
+	// 数据路径为空
+	if len(dataPath) == 0 {
+		return 0, 0, sdkcode.ErrCarImportFileInvalidDataPath
+	}
+
+	// 数据路径无效
+	fileInfo, err := os.Stat(dataPath)
+	if os.IsNotExist(err) {
+		return 0, 0, sdkcode.ErrCarImportFileInvalidDataPath
+	} else if err != nil {
+		log.WithError(err).
+			WithField("dataPath", dataPath).
+			Error("fail to return stat of file")
+		return 0, 0, err
+	}
+
+	totalSize = fileInfo.Size()
+
+	carFile, err := os.Open(dataPath)
+	if err != nil {
+		return 0, 0, sdkcode.ErrCarImportFileInvalidDataPath
+	}
+
+	store, err := carstorage.OpenReadable(carFile)
+	if err != nil {
+		// todo: return actual error?
+		//return 0, 0, err
+		log.WithError(err).
+			WithField("dataPath", dataPath).
+			Error("fail to open CAR file")
+		return 0, 0, sdkcode.ErrCarImportFileInvalidCarFormat
+	}
+
+	roots := store.(carstorage.ReadableCar).Roots()
+
+	ls := cidlink.DefaultLinkSystem()
+	ls.TrustedStorage = true
+	ls.SetReadStorage(store)
+
+	for _, root := range roots {
+		count, err := walkCarRoot(&ls, root)
+		if err != nil {
+			return 0, 0, err
+		}
+
+		fileAmount += count
+	}
+
+	return fileAmount, totalSize, nil
+}
+
+func walkCarRoot(ls *ipld.LinkSystem, root cid.Cid) (int64, error) {
+	if root.Prefix().Codec == cid.Raw {
+		// todo: return zero file amount?
+		//return 0, nil
+		return 1, nil
+	}
+
+	pbn, err := ls.Load(ipld.LinkContext{}, cidlink.Link{Cid: root}, dagpb.Type.PBNode)
+	if err != nil {
+		return 0, err
+	}
+	pbnode := pbn.(dagpb.PBNode)
+
+	ufn, err := unixfsnode.Reify(ipld.LinkContext{}, pbnode, ls)
+	if err != nil {
+		return 0, err
+	}
+
+	count, err := walkCarDir(ls, ufn)
+	if err != nil {
+		if !errors.Is(err, ErrNotDir) {
+			return 0, fmt.Errorf("%s: %w", root, err)
+		}
+
+		// if it's not a directory, it's a file.
+		ufsData, err := pbnode.LookupByString("Data")
+		if err != nil {
+			return 0, err
+		}
+
+		ufsBytes, err := ufsData.AsBytes()
+		if err != nil {
+			return 0, err
+		}
+
+		ufsNode, err := data.DecodeUnixFSData(ufsBytes)
+		if err != nil {
+			return 0, err
+		}
+
+		if ufsNode.DataType.Int() == data.Data_File || ufsNode.DataType.Int() == data.Data_Raw {
+			return 1, nil
+		}
+
+		return 0, nil
+	}
+
+	return count, nil
+}
+
+func walkCarDir(ls *ipld.LinkSystem, n ipld.Node) (int64, error) {
+	if n.Kind() != ipld.Kind_Map {
+		return 0, ErrNotDir
+	}
+
+	extractElement := func(name string, n ipld.Node) (int64, error) {
+		if n.Kind() != ipld.Kind_Link {
+			//todo:log here?
+			return 0, fmt.Errorf("unexpected map value for %s", name)
+		}
+
+		// a directory may be represented as a map of name:<link> if unixADL is applied
+		vl, err := n.AsLink()
+		if err != nil {
+			return 0, err
+		}
+
+		dest, err := ls.Load(ipld.LinkContext{}, vl, basicnode.Prototype.Any)
+		if err != nil {
+			if nf, ok := err.(interface{ NotFound() bool }); ok && nf.NotFound() {
+				//todo:log here?
+				//fmt.Fprintf(c.App.ErrWriter, "data for entry not found: %s (skipping...)\n", path.Join(outputPath, name))
+				return 0, nil
+			}
+			return 0, err
+		}
+
+		// degenerate files are handled here.
+		if dest.Kind() == ipld.Kind_Bytes {
+			// it is a file
+			return 1, nil
+		}
+
+		// dir / pbnode
+		pbb := dagpb.Type.PBNode.NewBuilder()
+		if err := pbb.AssignNode(dest); err != nil {
+			return 0, err
+		}
+		pbnode := pbb.Build().(dagpb.PBNode)
+
+		// interpret dagpb 'data' as unixfs data and look at type.
+		ufsData, err := pbnode.LookupByString("Data")
+		if err != nil {
+			return 0, err
+		}
+
+		ufsBytes, err := ufsData.AsBytes()
+		if err != nil {
+			return 0, err
+		}
+
+		ufsNode, err := data.DecodeUnixFSData(ufsBytes)
+		if err != nil {
+			return 0, err
+		}
+
+		switch ufsNode.DataType.Int() {
+		case data.Data_Directory, data.Data_HAMTShard:
+			ufn, err := unixfsnode.Reify(ipld.LinkContext{}, pbnode, ls)
+			if err != nil {
+				return 0, err
+			}
+			return walkCarDir(ls, ufn)
+
+		case data.Data_File, data.Data_Raw:
+			// it is a file
+			return 1, nil
+
+		case data.Data_Symlink:
+			// todo: if Symlink is counted as a file?
+			//return 0, nil
+			return 1, nil
+
+		default:
+			return 0, fmt.Errorf("unknown unixfs type: %d", ufsNode.DataType.Int())
+		}
+	}
+
+	// everything
+	var count int64
+	var shardSkip int
+	mi := n.MapIterator()
+	for !mi.Done() {
+		key, val, err := mi.Next()
+		if err != nil {
+			if nf, ok := err.(interface{ NotFound() bool }); ok && nf.NotFound() {
+				shardSkip++
+				continue
+			}
+			return 0, err
+		}
+
+		ks, err := key.AsString()
+		if err != nil {
+			return 0, err
+		}
+
+		ecount, err := extractElement(ks, val)
+		if err != nil {
+			return 0, err
+		}
+
+		count += ecount
+	}
+
+	//todo:log here?
+	if shardSkip > 0 {
+		log.Infof("data for entry not found for %d unknown sharded entries (skipped...)\n", shardSkip)
+	}
+
+	return count, nil
+}
+
+// endregion auxiliary method
 
 // GenerateShardingCarFiles 生成CAR分片文件
 func GenerateShardingCarFiles(req *model.CarFileUploadReq, shardingCarFileUploadReqs *[]model.CarFileUploadReq) error {

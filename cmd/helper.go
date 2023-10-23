@@ -12,6 +12,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unsafe"
 )
 
 // sema is a counting semaphore for limiting concurrency in dirEntries.
@@ -298,4 +299,8 @@ func dirEntries(dir string) []os.DirEntry {
 	}
 
 	return entries
+}
+
+func bytesToString(data []byte) string {
+	return *(*string)(unsafe.Pointer(&data))
 }

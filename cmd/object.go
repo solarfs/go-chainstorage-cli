@@ -1243,7 +1243,12 @@ func parseDagData(objectCid string) (ipld.Node, ipld.Node, error) {
 	dagData, err := getDagData(url)
 	if err != nil {
 		//fmt.Println("Error:", err)
-		log.Error(err)
+		//log.Error(err)
+		log.WithError(err).
+			WithFields(logrus.Fields{
+				"objectCid": objectCid,
+				"dagData":   dagData,
+			}).Error("fail to get dag data.")
 		return nil, nil, err
 	}
 
@@ -1535,7 +1540,14 @@ func extractFileNodes(objectCid, objectName, outputDir string) ([]DagFileNode, e
 	dagData, err := getDagData(url)
 	if err != nil {
 		//fmt.Println("Error:", err)
-		log.Error(err)
+		log.WithError(err).
+			WithFields(logrus.Fields{
+				"objectCid":  objectCid,
+				"objectName": objectName,
+				"outputDir":  outputDir,
+				"dagData":    dagData,
+			}).Error("fail to get dag data.")
+		//log.Error(err)
 		return nil, err
 	}
 
@@ -1690,7 +1702,16 @@ func traverseDag(objectCid, objectName, outputDir string, nodes *[]DagFileNode) 
 	dagData, err := getDagData(url)
 	if err != nil {
 		//fmt.Println("Error:", err)
-		log.Error(err)
+		//log.Error(err)
+
+		log.WithError(err).
+			WithFields(logrus.Fields{
+				"objectCid":  objectCid,
+				"objectName": objectName,
+				"outputDir":  outputDir,
+				"dagData":    dagData,
+				"nodes":      nodes,
+			}).Error("fail to get dag data.")
 		return err
 	}
 
@@ -1705,7 +1726,18 @@ func traverseDag(objectCid, objectName, outputDir string, nodes *[]DagFileNode) 
 	err = opts.Decode(nb1, reader)
 	if err != nil {
 		//fmt.Println("Failed to decode:", err)
-		log.Error(err)
+		//log.Error(err)
+
+		log.WithError(err).
+			WithFields(logrus.Fields{
+				"objectCid":  objectCid,
+				"objectName": objectName,
+				"outputDir":  outputDir,
+				"dagData":    dagData,
+				"nodes":      nodes,
+				"nb1":        nb1,
+			}).Error("fail to decode data.")
+
 		return err
 	}
 
