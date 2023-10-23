@@ -486,19 +486,19 @@ func UploadBigCarFile(sdk *chainstoragesdk.CssClient, req *model.CarFileUploadRe
 			//	break
 			//}
 
-			uploadResp, err := func() (uploadResp model.ShardingCarFileUploadResponse, err error) {
+			uploadResp, err := func(bar *pb.ProgressBar) (model.ShardingCarFileUploadResponse, error) {
+				shardingCarFileUploadResponse := model.ShardingCarFileUploadResponse{}
 				file, err := os.Open(uploadingReq.FileDestination)
 				if err != nil {
-					return
+					return shardingCarFileUploadResponse, err
 				}
 				defer file.Close()
 
 				extReader := bar.NewProxyReader(file)
 				//defer extReader.Close()
 
-				uploadResp, err = sdk.Car.UploadShardingCarFileExt(&uploadingReq, extReader)
-				return
-			}()
+				return sdk.Car.UploadShardingCarFileExt(&uploadingReq, extReader)
+			}(bar)
 			if err == nil && uploadResp.Code == http.StatusOK {
 				uploadRespList = append(uploadRespList, uploadResp)
 				break
@@ -957,19 +957,20 @@ func ImportBigCarFile(sdk *chainstoragesdk.CssClient, req *model.CarFileUploadRe
 			//	break
 			//}
 
-			uploadResp, err := func() (uploadResp model.ShardingCarFileUploadResponse, err error) {
+			uploadResp, err := func(bar *pb.ProgressBar) (model.ShardingCarFileUploadResponse, error) {
+				shardingCarFileUploadResponse := model.ShardingCarFileUploadResponse{}
 				file, err := os.Open(uploadingReq.FileDestination)
 				if err != nil {
-					return
+					return shardingCarFileUploadResponse, err
 				}
 				defer file.Close()
 
 				extReader := bar.NewProxyReader(file)
 				//defer extReader.Close()
 
-				uploadResp, err = sdk.Car.UploadShardingCarFileExt(&uploadingReq, extReader)
-				return
-			}()
+				//uploadResp, err = sdk.Car.UploadShardingCarFileExt(&uploadingReq, extReader)
+				return sdk.Car.UploadShardingCarFileExt(&uploadingReq, extReader)
+			}(bar)
 			if err == nil && uploadResp.Code == http.StatusOK {
 				uploadRespList = append(uploadRespList, uploadResp)
 				break

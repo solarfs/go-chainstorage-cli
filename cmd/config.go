@@ -25,10 +25,10 @@ type SdkConfig struct {
 	CarFileWorkPath          string `toml:"carFileWorkPath"`
 	CarFileShardingThreshold int    `toml:"carFileShardingThreshold"`
 	ChainStorageApiToken     string `toml:"chainStorageApiToken"`
-	HTTPRequestUserAgent     string `toml:"httpRequestUserAgent"`
-	HTTPRequestOvertime      int    `toml:"httpRequestOvertime"`
+	HttpRequestUserAgent     string `toml:"httpRequestUserAgent"`
+	HttpRequestOvertime      int    `toml:"httpRequestOvertime"`
 	CarVersion               int    `toml:"carVersion"`
-	UseHTTPSProtocol         bool   `toml:"useHttpsProtocol"`
+	UseHttpsProtocol         bool   `toml:"useHttpsProtocol"`
 }
 
 type LoggerConfig struct {
